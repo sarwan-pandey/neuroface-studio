@@ -1,0 +1,48 @@
+# =====================================================================
+#  NeuroFace Studio - Git Ignore Rules
+# =====================================================================
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Caches & Model Files
+*.pkl
+*.pickle
+gallery_cache.pkl
+*.onnx
+*.zip
+*.tar.gz
+*.bin
+
+# Gallery Test Data (Preserve directory structure, exclude local image dumps)
+# Comment out the line below if you want your local gallery photos pushed to Git:
+gallery/*
+!gallery/.gitkeep
+
+# IDEs & OS Metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Diagnostics
+*.log
+scratch/
+build/
+dist/
+*.spec

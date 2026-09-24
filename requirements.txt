@@ -1,0 +1,16 @@
+# ═══════════════════════════════════════════════════════════════
+#  FaceID Studio — Requirements
+#  Install: pip install -r requirements.txt
+# ═══════════════════════════════════════════════════════════════
+
+# --- Computer Vision ---
+opencv-python>=4.8.0                # Camera capture, image I/O, drawing overlays
+numpy>=1.24.0                       # Array operations, embedding math
+
+# --- Face Detection & Recognition ---
+insightface>=0.7.3                  # ArcFace models (buffalo_l, buffalo_s, antelopev2)
+onnxruntime>=1.16.0                 # ONNX inference backend for InsightFace
+
+# --- GUI Framework ---
+customtkinter>=5.2.0                # Modern dark-themed Tkinter widgets
+Pillow>=10.0.0                      # Image loading, thumbnails, Tk display

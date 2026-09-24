@@ -1,0 +1,22 @@
+{
+  "name": "neuroface-studio",
+  "version": "1.0.0",
+  "description": "Next-Gen Real-Time Biometric Face Recognition & Identity Verification Suite",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "start": "python -m http.server 3000",
+    "build": "echo 'Static build ready'"
+  },
+  "keywords": [
+    "face-recognition",
+    "biometrics",
+    "arcface",
+    "onnx",
+    "webgl",
+    "ai",
+    "computer-vision"
+  ],
+  "author": "Sarwan Kr. Pandey",
+  "license": "MIT"
+}

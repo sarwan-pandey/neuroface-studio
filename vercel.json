@@ -1,6 +1,8 @@
 {
   "version": 2,
   "name": "neuroface-studio",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "routes": [
     {
       "src": "/(.*)",

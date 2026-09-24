@@ -1,0 +1,10 @@
+# Files ignored by Vercel deployment
+# (Prevents Vercel from treating this as a Python serverless function)
+requirements.txt
+face_gui.py
+gallery/
+venv/
+*.py
+*.pyc
+__pycache__/
+*.pkl

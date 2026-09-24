@@ -1,6 +1,7 @@
 {
   "version": 2,
   "name": "neuroface-studio",
+  "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
   "routes": [

@@ -5,8 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "python -m http.server 3000",
-    "start": "python -m http.server 3000",
-    "build": "echo 'Static build ready'"
+    "start": "python -m http.server 3000"
   },
   "keywords": [
     "face-recognition",

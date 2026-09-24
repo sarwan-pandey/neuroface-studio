@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroFace Studio — AI Real-Time Biometric Face Recognition</title>
+  <meta name="description" content="Next-Gen Real-Time Biometric Face Recognition & Identity Verification Suite powered by Deep Learning, WebGL, and ONNX.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Load face-api.js from high-speed jsDelivr CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js"></script>
+</head>
+<body>
+  <div class="app-container" id="app">
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!--  SIDEBAR                                                       -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">◉</div>
+        <div class="brand-text">
+          <h2>NeuroFace Studio</h2>
+          <span class="subtext">Real-time recognition engine</span>
+        </div>
+      </div>
+
+      <!-- Model Status Badge -->
+      <div class="status-card" id="statusCard">
+        <div class="status-dot dot-red" id="modelStatusDot"></div>
+        <div class="status-info">
+          <span class="status-title" id="modelStatusTitle">Model Not Loaded</span>
+          <span class="status-detail" id="modelStatusDetail">Click "Load Model" below</span>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Navigation Menu -->
+      <div class="section-label">NAVIGATION</div>
+      <nav class="nav-menu">
+        <button class="nav-btn active" id="navLive" data-page="live">
+          <span class="nav-icon">📡</span>
+          <span class="nav-label">Live Recognition</span>
+        </button>
+        <button class="nav-btn" id="navEnroll" data-page="enroll">
+          <span class="nav-icon">➕</span>
+          <span class="nav-label">Enroll Faces</span>
+        </button>
+        <button class="nav-btn" id="navGallery" data-page="gallery">
+          <span class="nav-icon">📂</span>
+          <span class="nav-label">Gallery Manager</span>
+          <span class="nav-badge" id="navGalleryBadge">0</span>
+        </button>
+        <button class="nav-btn" id="navSettings" data-page="settings">
+          <span class="nav-icon">⚙</span>
+          <span class="nav-label">Settings</span>
+        </button>
+      </nav>
+
+      <div class="nav-divider"></div>
+
+      <!-- Quick Actions -->
+      <div class="section-label">QUICK ACTIONS</div>
+      <div class="quick-actions">
+        <button class="btn btn-primary" id="btnLoadModel">
+          <span>⚡</span> Load Model
+        </button>
+        <button class="btn btn-secondary" id="btnBuildGallery">
+          <span>🔨</span> Rebuild Gallery
+        </button>
+      </div>
+
+      <!-- Telemetry Hardware Info -->
+      <div class="hardware-info">
+        <div class="hw-item">
+          <span class="hw-label">Backend:</span>
+          <span class="hw-val" id="hwBackend">WebGL / WebAssembly</span>
+        </div>
+        <div class="hw-item">
+          <span class="hw-label">Storage:</span>
+          <span class="hw-val" id="hwStorage">IndexedDB (Persistent)</span>
+        </div>
+      </div>
+
+      <!-- Status Footer -->
+      <div class="sidebar-footer">
+        <span class="footer-status" id="sidebarStatusText">Ready • Idle</span>
+      </div>
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!--  MAIN CONTENT VIEWPORT                                         -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <main class="main-viewport">
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!--  PAGE: LIVE RECOGNITION                                        -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section class="page active" id="pageLive">
+        <header class="page-header">
+          <div class="header-left">
+            <h1 class="page-title">Live Recognition</h1>
+            <p class="page-subtitle">Real-time facial detection, 128D embedding matching & biometric telemetry</p>
+          </div>
+          <div class="header-right">
+            <button class="btn btn-success btn-lg" id="btnToggleCamera">
+              <span id="camBtnIcon">▶</span> <span id="camBtnText">Start Camera</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Metric Cards Row -->
+        <div class="metrics-grid">
+          <div class="metric-card metric-blue">
+            <span class="metric-label">FPS RATE</span>
+            <div class="metric-value-row">
+              <span class="metric-value" id="metricFps">—</span>
+              <span class="metric-unit">fps</span>
+            </div>
+            <div class="metric-sub">Camera inference speed</div>
+          </div>
+
+          <div class="metric-card metric-purple">
+            <span class="metric-label">FACES DETECTED</span>
+            <div class="metric-value-row">
+              <span class="metric-value" id="metricFaces">0</span>
+              <span class="metric-unit">active</span>
+            </div>
+            <div class="metric-sub">Multi-face tracking</div>
+          </div>
+
+          <div class="metric-card metric-green">
+            <span class="metric-label">IDENTIFIED</span>
+            <div class="metric-value-row">
+              <span class="metric-value" id="metricIdentified">0</span>
+              <span class="metric-unit">matched</span>
+            </div>
+            <div class="metric-sub">Gallery recognition</div>
+          </div>
+
+          <div class="metric-card metric-amber">
+            <span class="metric-label">ENGINE STATUS</span>
+            <div class="metric-value-row">
+              <span class="metric-value" id="metricStatus">Idle</span>
+            </div>
+            <div class="metric-sub" id="metricStatusSub">Camera offline</div>
+          </div>
+        </div>
+
+        <!-- Video Viewport Frame -->
+        <div class="viewport-card">
+          <div class="video-container" id="videoWrapper">
+            <video id="webcamVideo" autoplay muted playsinline></video>
+            <canvas id="overlayCanvas"></canvas>
+
+            <!-- Video Overlay HUD Reticle -->
+            <div class="hud-reticle" id="hudReticle">
+              <div class="reticle-corner top-left"></div>
+              <div class="reticle-corner top-right"></div>
+              <div class="reticle-corner bottom-left"></div>
+              <div class="reticle-corner bottom-right"></div>
+            </div>
+
+            <!-- Empty State / Placeholder -->
+            <div class="video-placeholder" id="videoPlaceholder">
+              <div class="placeholder-icon">📷</div>
+              <h3>Camera Feed Inactive</h3>
+              <p>Click <strong>"Start Camera"</strong> to begin real-time face detection & identity matching</p>
+              <div class="quick-steps">
+                <span>1. Load Model</span> → <span>2. Enroll Faces</span> → <span>3. Start Camera</span>
+              </div>
+            </div>
+
+            <!-- Live Match Banner -->
+            <div class="live-match-banner" id="liveMatchBanner" style="display: none;">
+              <span class="match-icon">✓</span>
+              <span class="match-name" id="matchBannerName">Matched Identity</span>
+              <span class="match-score" id="matchBannerScore">98.4% Match</span>
+            </div>
+          </div>
+
+          <!-- Bottom Live Controls Bar -->
+          <div class="viewport-footer">
+            <div class="slider-control">
+              <label for="thresholdSlider">
+                <span>Confidence Threshold:</span>
+                <strong id="thresholdVal">0.45</strong>
+              </label>
+              <input type="range" id="thresholdSlider" min="0.20" max="0.80" step="0.01" value="0.45">
+            </div>
+
+            <div class="hud-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="chkShowLandmarks" checked>
+                <span>Face Mesh (Landmarks)</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chkShowBoxes" checked>
+                <span>Target Bounding Boxes</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!--  PAGE: ENROLL FACES                                            -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section class="page" id="pageEnroll">
+        <header class="page-header">
+          <div class="header-left">
+            <h1 class="page-title">Enroll New Person</h1>
+            <p class="page-subtitle">Capture live camera samples or upload face images to build biometric identities</p>
+          </div>
+        </header>
+
+        <!-- Enrollment Controls Bar -->
+        <div class="enroll-ctrl-card">
+          <div class="form-group">
+            <label for="enrollNameInput">Person Name / Identity</label>
+            <input type="text" id="enrollNameInput" placeholder="e.g. Alex Rivera, Sarwan Pandey" class="form-input">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="btnStartEnrollCam">
+              <span>📷</span> Start Capture
+            </button>
+            <button class="btn btn-secondary" id="btnUploadPhotos">
+              <span>📁</span> Upload Photos
+            </button>
+            <input type="file" id="fileUploadInput" accept="image/*" multiple style="display: none;">
+            <button class="btn btn-success" id="btnSnapFace" disabled>
+              <span>📸</span> Snap Frame
+            </button>
+            <button class="btn btn-danger" id="btnStopEnrollCam" disabled>
+              <span>⏹</span> Stop
+            </button>
+          </div>
+        </div>
+
+        <!-- Enrollment Dual-Pane Workspace -->
+        <div class="enroll-workspace">
+          <!-- Live Enrollment Preview -->
+          <div class="enroll-cam-card">
+            <div class="enroll-cam-wrapper" id="enrollCamWrapper">
+              <video id="enrollVideo" autoplay muted playsinline></video>
+              <canvas id="enrollCanvas"></canvas>
+              <div class="enroll-placeholder" id="enrollPlaceholder">
+                <div class="placeholder-icon">👤</div>
+                <h3>Enrollment Camera Offline</h3>
+                <p>Enter a person name above and click <strong>"Start Capture"</strong></p>
+                <div class="enroll-tips">
+                  💡 <em>Tip: Capture 3–5 angles (front, slight tilt, smiling) for high recognition accuracy</em>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Captured Thumbnails & Actions Sidebar -->
+          <aside class="enroll-thumbs-card">
+            <div class="thumbs-header">
+              <h3>Captured Frames</h3>
+              <span class="badge" id="snapCountBadge">0 images</span>
+            </div>
+            <div class="thumbs-container" id="thumbsContainer">
+              <div class="thumbs-empty" id="thumbsEmpty">
+                <span>No snapshots yet</span>
+              </div>
+            </div>
+            <div class="thumbs-footer">
+              <button class="btn btn-primary btn-block" id="btnSaveEnrollment" disabled>
+                <span>💾</span> Enroll to Gallery
+              </button>
+              <button class="btn btn-ghost btn-block" id="btnClearSnaps">
+                <span>✕</span> Clear Captured
+              </button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!--  PAGE: GALLERY MANAGER                                         -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section class="page" id="pageGallery">
+        <header class="page-header">
+          <div class="header-left">
+            <h1 class="page-title">Gallery Manager</h1>
+            <p class="page-subtitle">View, inspect, export, and delete enrolled biometric identity profiles</p>
+          </div>
+          <div class="header-right">
+            <button class="btn btn-secondary" id="btnRefreshGallery">
+              <span>🔄</span> Refresh
+            </button>
+            <button class="btn btn-danger" id="btnDeleteSelectedPerson" disabled>
+              <span>🗑</span> Delete Person
+            </button>
+          </div>
+        </header>
+
+        <div class="gallery-workspace">
+          <!-- Person List Sidebar -->
+          <div class="gallery-list-card">
+            <div class="list-header">
+              <h3>Enrolled Identities</h3>
+              <span class="badge" id="totalIdentitiesBadge">0</span>
+            </div>
+            <div class="persons-list" id="personsList">
+              <div class="empty-list-notice">
+                <span>No enrolled identities yet.<br>Use "Enroll Faces" to add users.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Identity Detail & Photo Grid -->
+          <div class="gallery-grid-card">
+            <div class="grid-header" id="gallerySelectedHeader">
+              <h3 id="selectedPersonTitle">Select an identity</h3>
+              <span class="sub" id="selectedPersonSub">Select an enrolled person to view descriptors & thumbnails</span>
+            </div>
+            <div class="photo-grid" id="photoGrid">
+              <div class="empty-grid-notice">
+                <span class="icon">🖼</span>
+                <p>Click a person from the list on the left to inspect biometric photos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!--  PAGE: SETTINGS & BENCHMARKS                                   -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section class="page" id="pageSettings">
+        <header class="page-header">
+          <div class="header-left">
+            <h1 class="page-title">System Settings</h1>
+            <p class="page-subtitle">Configure AI model weights, inference execution provider, and biometric storage</p>
+          </div>
+        </header>
+
+        <div class="settings-grid">
+          <!-- AI Model Configuration -->
+          <div class="settings-card">
+            <h3>🤖 Deep Learning Model Configuration</h3>
+            <div class="setting-item">
+              <label for="selectModelType">Face Detection Architecture:</label>
+              <select id="selectModelType" class="form-select">
+                <option value="tiny" selected>TinyFaceDetector (30-60 FPS • Lightweight WebGL)</option>
+                <option value="ssd">SSD MobileNet V1 (Higher precision • Heavier)</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label for="selectCameraDevice">Video Input Source:</label>
+              <select id="selectCameraDevice" class="form-select">
+                <option value="default">Default User Camera</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Biometric Storage & Backup -->
+          <div class="settings-card">
+            <h3>💾 Biometric Database & Backup</h3>
+            <p class="card-desc">All embeddings and thumbnails are securely stored in your browser's persistent IndexedDB storage.</p>
+            <div class="setting-actions">
+              <button class="btn btn-secondary" id="btnExportGallery">
+                <span>📤</span> Export Biometric Database (JSON)
+              </button>
+              <button class="btn btn-secondary" id="btnImportGallery">
+                <span>📥</span> Import Database
+              </button>
+              <input type="file" id="importFileInput" accept=".json" style="display: none;">
+              <button class="btn btn-danger" id="btnClearAllData">
+                <span>⚠️</span> Clear All Enrolled Identities
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Notification message</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

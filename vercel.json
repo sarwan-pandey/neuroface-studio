@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "neuroface-studio",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "headers": {
+        "Permissions-Policy": "camera=*",
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  ]
+}

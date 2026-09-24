@@ -4,11 +4,19 @@
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![InsightFace](https://img.shields.io/badge/InsightFace-ArcFace-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://github.com/deepinsight/insightface)
 [![ONNX Runtime](https://img.shields.io/badge/ONNX%20Runtime-CPU%20%2F%20CUDA-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai/)
-[![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
-[![CustomTkinter](https://img.shields.io/badge/UI-CustomTkinter-10B981?style=for-the-badge)](https://github.com/TomSchimansky/CustomTkinter)
+[![Vercel](https://img.shields.io/badge/Vercel-Web%20Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![CustomTkinter](https://img.shields.io/badge/UI-CustomTkinter%20%26%20Web-10B981?style=for-the-badge)](https://github.com/TomSchimansky/CustomTkinter)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sarwan-pandey/neuroface-studio)
+
 ---
+
+## 🌐 Dual Deployment: Web (Vercel) & Desktop (Python/CUDA)
+
+NeuroFace Studio comes in **two high-performance editions**:
+1. 🌐 **Live Web Edition (Vercel-Ready)**: Runs 100% in-browser using WebGL & WebAssembly via `face-api.js`. Accesses client webcams with zero server latency, zero cloud costs, and instant 1-click deployment on Vercel.
+2. 🖥️ **Desktop Professional Edition**: Native Python + CustomTkinter + InsightFace ArcFace + ONNX Runtime for edge security kiosks and offline enterprise surveillance.
 
 ## ⚡ Overview
 
